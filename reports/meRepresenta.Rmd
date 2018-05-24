@@ -1,0 +1,72 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(here)
+theme_set(theme_bw())
+```
+
+
+Analisaremos o conjunto de dados de 890 candidatos que comentaram assuntos pró direitos humanos em todo o Brasil, percorrendo 244 cidades em 24 estados os candidatos a vereadores da eleições de 2016 responderão se foram afavor dessess temas.
+```{r}
+respostas = read_csv(here::here("data/respostas-merepresenta-2016.csv"), 
+                     col_types = cols(.default = col_character(), 
+                                      nota_partido = col_integer(), 
+                                      votos_recebidos = col_integer()))
+
+# A versão long (em vez de wide) dos dados facilita muito pro ggplot:
+respostas_long = 
+    respostas %>% 
+    gather(key = "tema", 
+           value = "resposta", 
+           10:23)
+```
+
+Para conhcer mais os dados iremos observar quais os temas presente e sua proporção do temas mais aprovados e menos aprovados.
+```{r}
+por_tema = 
+    respostas_long %>% 
+    group_by(tema) %>% 
+    summarise(apoio = sum(resposta == "S") / n())
+
+por_tema %>% 
+    ggplot(aes(x = reorder(tema, apoio), y = apoio, ymax = apoio, ymin = 0)) + 
+    geom_point(size = 2) + 
+    geom_linerange(size = .3) + 
+    scale_y_continuous(limits = c(0, 1)) + 
+    coord_flip() + 
+    labs(
+        y = "Proporção de apoios", 
+        x = ""
+    )
+```
+Como podemos observar os temas que foram votado e sua proporção considerando que o tema orçamento participativo como o tema de mais interesse de todos os que votaram e desmilitarização da policia como o o menos vota entre os candidados.
+
+##Qual partido está mais em defesa dos temas relacionados a classe LGBT?
+
+```{r}
+respostas_long %>%
+  filter(tema %in% c("Adoção por famílias LGBTs",
+                     "Respeito à identidade de gênero de pessoas trans",
+                     "Criminalização da LGBTfobia") ) %>% 
+  group_by(sigla_partido) %>%
+  mutate(lado = sigla_partido %in% c("PT","PDT","PTdoB","PSB","PROS","REDE","PSOL","PC do B")) %>%
+  summarise(proporção = sum(resposta ==  "S")/n(), 
+            quantidade = n()) %>%
+  ggplot(aes(x = proporção, 
+             y = reorder(sigla_partido,proporção),
+             size = quantidade,
+             color = lado )) + 
+    geom_point() +
+      labs(
+        y = "Partido", 
+        x = ""
+    )
+```
+
+
+
