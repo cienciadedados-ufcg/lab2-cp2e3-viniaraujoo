@@ -11,7 +11,8 @@ theme_set(theme_bw())
 ```
 
 
-Analisaremos o conjunto de dados de 890 candidatos que comentaram assuntos pró direitos humanos em todo o Brasil, percorrendo 244 cidades em 24 estados os candidatos a vereadores da eleições de 2016 responderão se foram afavor dessess temas.
+Analisaremos o conjunto de dados de 890 candidatos que comentaram assuntos pró direitos humanos em todo o Brasil, percorrendo 244 cidades em 24 estados os candidatos a vereadores da eleições de 2016 responderão se foram afavor dessess temas. Separamos no conjunto dos dados os partidos em dois lados (Esquerda,Direita) para isso baseamos no [site](http://www.bbc.com/portuguese/brasil-41058120) e assim classificamos os seguintes partidos como de Esquerda : PT,PDT,PTdoB,PSB,REDE,PSOL,PC do B, PCB. 
+
 ```{r}
 respostas = read_csv(here::here("data/respostas-merepresenta-2016.csv"), 
                      col_types = cols(.default = col_character(), 
@@ -23,7 +24,8 @@ respostas_long =
     respostas %>% 
     gather(key = "tema", 
            value = "resposta", 
-           10:23)
+           10:23) %>%
+  mutate(lado = sigla_partido %in% c("PT","PDT","PTdoB","PSB","PROS","REDE","PSOL","PC do B","PCB"))
 ```
 
 Para conhcer mais os dados iremos observar quais os temas presente e sua proporção do temas mais aprovados e menos aprovados.
@@ -47,26 +49,29 @@ por_tema %>%
 Como podemos observar os temas que foram votado e sua proporção considerando que o tema orçamento participativo como o tema de mais interesse de todos os que votaram e desmilitarização da policia como o o menos vota entre os candidados.
 
 ##Qual partido está mais em defesa dos temas relacionados a classe LGBT?
+Para verificar está associação analisamos a proporção associada ao numero de respostas á favor desses temas e os partidos que são á favor desses temas.
 
 ```{r}
 respostas_long %>%
   filter(tema %in% c("Adoção por famílias LGBTs",
                      "Respeito à identidade de gênero de pessoas trans",
                      "Criminalização da LGBTfobia") ) %>% 
-  group_by(sigla_partido) %>%
-  mutate(lado = sigla_partido %in% c("PT","PDT","PTdoB","PSB","PROS","REDE","PSOL","PC do B")) %>%
+  group_by(sigla_partido,lado) %>%
   summarise(proporção = sum(resposta ==  "S")/n(), 
             quantidade = n()) %>%
   ggplot(aes(x = proporção, 
              y = reorder(sigla_partido,proporção),
              size = quantidade,
-             color = lado )) + 
+             color = lado)) + 
     geom_point() +
       labs(
         y = "Partido", 
         x = ""
     )
 ```
+Como podemos observar o partido PSTU e PCB como os partidos mais á favor do tema porém podemos analisar em relação a seu tamamnho que o número de candidatos desses partidos que responderam o questionamento como muito pequeno e assim torna mais facil em sua totalidade todos sérem á favor do tema, tirando esse paramentro de tamanho observamos os patidos como PSOL, PT com uma grande quantidade de candidatos e observamos que em sua maioria esses partidos estão em grande defesa nos temas relacionado a LGBT.
+
+
 
 
 
