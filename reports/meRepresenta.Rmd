@@ -1,6 +1,7 @@
 ---
-title: "R Notebook"
+title: "Pró direitos humanos : Direita (X) Esquerda"
 output: html_notebook
+autour: Vinicius Brandão
 ---
 
 
@@ -11,7 +12,7 @@ theme_set(theme_bw())
 ```
 
 
-Analisaremos o conjunto de dados de 890 candidatos que comentaram assuntos pró direitos humanos em todo o Brasil, percorrendo 244 cidades em 24 estados os candidatos a vereadores da eleições de 2016 responderão se foram afavor dessess temas. Separamos no conjunto dos dados os partidos em dois lados (Esquerda,Direita) para isso baseamos no [site](http://www.bbc.com/portuguese/brasil-41058120) e assim classificamos os seguintes partidos como de Esquerda : PT,PDT,PTdoB,PSB,REDE,PSOL,PC do B, PCB. 
+Analisaremos o conjunto de dados de 890 candidatos que comentaram assuntos pró direitos humanos em todo o Brasil, percorrendo 244 cidades em 24 estados os candidatos a vereadores da eleição de 2016 responderão se foram a favor desses temas. Separamos no conjunto dos dados os partidos em dois lados (Esquerda, Direita) para isso baseamos no [site](http://www.bbc.com/portuguese/brasil-41058120) e assim classificamos os seguintes partidos como de Esquerda: PT,PDT,PTdoB,PSB,REDE,PSOL,PC do B, PCB.
 
 ```{r}
 respostas = read_csv(here::here("data/respostas-merepresenta-2016.csv"), 
@@ -69,7 +70,9 @@ respostas_long %>%
         x = ""
     )
 ```
-Como podemos observar o partido PSTU e PCB como os partidos mais á favor do tema porém podemos analisar em relação a seu tamamnho que o número de candidatos desses partidos que responderam o questionamento como muito pequeno e assim torna mais facil em sua totalidade todos sérem á favor do tema, tirando esse paramentro de tamanho observamos os patidos como PSOL, PT com uma grande quantidade de candidatos e observamos que em sua maioria esses partidos estão em grande defesa nos temas relacionado a LGBT. 
+Como podemos observar o partido PSTU e PCB como os partidos mais á favor do tema, porém, podemos analisar em relação a seu tamanho que o número de candidatos desses partidos que responderam o questionamento como muito pequeno e assim torna mais fácil em sua totalidade todos serem á favor do tema, tirando esse paramentro de tamanho observamos os partidos como PSOL, PT com uma grande quantidade de candidatos e observamos que em sua maioria esses partidos estão em grande defesa nos temas relacionado a LGBT.
+Observamos que os partidos que menos apoia esses temas são partidos considerados Cristãos são eles PRB, PSC, PHS e PSDC.
+
 
 ##Qual Estádo onde onde o tema sobre violência contra mulher é mais considerado entre os candidatos.
 Utilizaremos medida de proporção em relação aos estados com o tema de Combate à violência conta mulher e assim também observar se direita ou esquerda qual lado estária mais á favor deste tema. 
@@ -90,9 +93,40 @@ respostas_long %>%
         x = ""
     )
 ```
-Como podemos observar em sua maioria os em relação aos estados são á favor do combate da violência contra a mulher observamos a proporção 1 mas podemos considerar que o número de candidatos desses estados como algo pequeno diante da amostra.
-Podemos considerar o estado de São Paulo em especifico em que os lado de Esquerda x Direita todo proporções um pouco diferente e nesse estado observamos um numero consideravel de candidatos que respondeu o questionario assim observamos que a proporção dos candidatos de Esquerda um pouco maior mas considerando ambos os lados o estado tem uma proporção boa de candidatos á favor do tema. 
+Como podemos observar em sua maioria os em relação aos estados são á favor do combate da violência contra a mulher observamos a proporção 1, mas podemos considerar que o número de candidatos desses estados como algo pequeno diante da amostra.
+Podemos considerar o estado de São Paulo em específico em que os lados de Esquerda (x) Direita toda proporções um pouco diferente e nesse estado observamos um número considerável de candidatos que respondeu o questionário assim observamos que a proporção dos candidatos de Esquerda um pouco maior, mas considerando ambos os lados o estado tem uma proporção boa de candidatos á favor do tema.
 
+
+### Qual gênero é mais favoravel com a causa LGBT?
+Para isso analisamos como está a distribuição de homens e mulheres nos dados
+
+```{r}
+        
+```
+
+Como podemos observa o número de candidatos do genero Masculino quase o dobro do gênero Feminino.
+
+```{r}
+respostas_long %>%
+  filter(tema %in% c("Adoção por famílias LGBTs",
+                     "Respeito à identidade de gênero de pessoas trans",
+                     "Criminalização da LGBTfobia"), genero %in% c("MASCULINO","FEMININO")) %>% 
+  group_by(genero,lado) %>%
+  summarise(proporção = sum(resposta ==  "S")/n(), 
+            quantidade = n()) %>%
+  ggplot(aes(x = proporção, 
+             y = reorder(genero,proporção),
+             size = quantidade,
+             color = lado)) + 
+    geom_point() +
+      labs(
+        y = "Gênero", 
+        x = ""
+    )
+  
+```
+Observamos que a proporção de mulheres que apoia causas com temas relacionados a classe LGBT maiores do que a dos homens e podemos observa também que em sua (maioria) tanto homens e mulheres da Esquerda tem uma proporção maior de serem á favores dessas temáticas.
+Observamos que homens de partidos do lado direito tende á ser mais contra a esses temas. 
 
 
 
