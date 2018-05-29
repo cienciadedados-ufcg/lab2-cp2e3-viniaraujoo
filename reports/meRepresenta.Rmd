@@ -69,7 +69,29 @@ respostas_long %>%
         x = ""
     )
 ```
-Como podemos observar o partido PSTU e PCB como os partidos mais á favor do tema porém podemos analisar em relação a seu tamamnho que o número de candidatos desses partidos que responderam o questionamento como muito pequeno e assim torna mais facil em sua totalidade todos sérem á favor do tema, tirando esse paramentro de tamanho observamos os patidos como PSOL, PT com uma grande quantidade de candidatos e observamos que em sua maioria esses partidos estão em grande defesa nos temas relacionado a LGBT.
+Como podemos observar o partido PSTU e PCB como os partidos mais á favor do tema porém podemos analisar em relação a seu tamamnho que o número de candidatos desses partidos que responderam o questionamento como muito pequeno e assim torna mais facil em sua totalidade todos sérem á favor do tema, tirando esse paramentro de tamanho observamos os patidos como PSOL, PT com uma grande quantidade de candidatos e observamos que em sua maioria esses partidos estão em grande defesa nos temas relacionado a LGBT. 
+
+##Qual Estádo onde onde o tema sobre violência contra mulher é mais considerado entre os candidatos.
+Utilizaremos medida de proporção em relação aos estados com o tema de Combate à violência conta mulher e assim também observar se direita ou esquerda qual lado estária mais á favor deste tema. 
+
+```{r}
+respostas_long %>%
+  filter(tema %in% c("Combate à violência contra mulher") ) %>% 
+  group_by(sigla_estado,lado) %>%
+  summarise(proporção = sum(resposta ==  "S")/n(), 
+            quantidade = n()) %>%
+  ggplot(aes(x = proporção, 
+             y = reorder(sigla_estado,proporção),
+             size = quantidade,
+             color = lado)) + 
+    geom_point() +
+      labs(
+        y = "Estados", 
+        x = ""
+    )
+```
+Como podemos observar em sua maioria os em relação aos estados são á favor do combate da violência contra a mulher observamos a proporção 1 mas podemos considerar que o número de candidatos desses estados como algo pequeno diante da amostra.
+Podemos considerar o estado de São Paulo em especifico em que os lado de Esquerda x Direita todo proporções um pouco diferente e nesse estado observamos um numero consideravel de candidatos que respondeu o questionario assim observamos que a proporção dos candidatos de Esquerda um pouco maior mas considerando ambos os lados o estado tem uma proporção boa de candidatos á favor do tema. 
 
 
 
